@@ -5,6 +5,7 @@
 .vscode
 instance
 *.db
+.env
 
 ### Also any macOS specific files
 .DS_Store
