@@ -18,6 +18,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+db = SQLAlchemy(app)
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -42,8 +43,11 @@ gravatar = Gravatar(app,
                     base_url=None)
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_URI", "sqlite:///blog.db").replace("postgres://", "postgresql://")
-db = SQLAlchemy()
+if os.environ.get("LOCAL") == "True":
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
 db.init_app(app)
 
 
