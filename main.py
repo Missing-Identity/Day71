@@ -18,6 +18,13 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+
+# CONNECT TO DB
+if os.environ.get("LOCAL") == "True":
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
 db = SQLAlchemy(app)
 ckeditor = CKEditor(app)
 Bootstrap5(app)
@@ -41,14 +48,6 @@ gravatar = Gravatar(app,
                     force_lower=False,
                     use_ssl=False,
                     base_url=None)
-
-# CONNECT TO DB
-if os.environ.get("LOCAL") == "True":
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
-
-db.init_app(app)
 
 
 # CONFIGURE TABLES
@@ -96,8 +95,8 @@ class Comment(db.Model):
     parent_post = relationship("BlogPost", back_populates="comments")
 
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 # Create an admin-only decorator
